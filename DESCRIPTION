@@ -1,0 +1,17 @@
+Package: bbknn
+Type: Package
+Title: R implementation of the BBKNN package
+Version: 0.1.0
+Date: 2018
+Author: Tom Kelly <tom.kelly@riken.jp>
+Maintainer: Tom Kelly <tom.kelly@riken.jp>
+Description: Implements the Python bbknn module to be called in R.
+    Enables batch effect correction usung the BBKNN algorithm.
+    See the Python repository for more details: https://github.com/Teichlab/bbknn
+    Park et al (2018) Fast Batch Alignment of Single Cell Transcriptomes Unifies Multiple Mouse Cell Atlases into an Integrated Landscape. bioRxiv:397042
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.1
+Suggests: 
+    covr

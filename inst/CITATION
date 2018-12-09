@@ -1,0 +1,18 @@
+citHeader("To cite the bbknn package in publications use:")
+
+citEntry(entry = "Manual",
+         title        = "bbknn: R implementation of the BBKNN algorithm",
+         author       = personList(as.person("S. Thomas Kelly")),
+         year         = "2018",
+         note         = "R package version 0.1.0",
+         url          = "https://github.com/TomKellyGenetics/bbknn",
+
+         textVersion  =
+           paste("S. Thomas Kelly (2018). bbknn: R implementation of the bbknn algorithm. R package version 0.1.0",
+                 "https://github.com/TomKellyGenetics/bbknn")
+)
+
+citFooter(paste("Please also acknowledge the original publication: \n",
+                "Park, Jong-Eun and Polanski, Krzysztof and Meyer, Kerstin and Teichmann, Sarah A (2018). \n",
+                "Fast Batch Alignment of Single Cell Transcriptomes Unifies Multiple Mouse Cell Atlases into an Integrated Landscape.  \n",
+                "`bioRxiv:397042 <https://doi.org/10.1101/397042>`",sep=" "))
