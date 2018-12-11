@@ -31,19 +31,20 @@ bbknn <- function(data_matrix, batch, pca = TRUE, compute_pca = "python"){
     
     #perform PCA
     if(pca){
-        sc$tl$pca(adata)
+        reticulate::py_list_attributes(adata$obsm)
+        #sc$tl$pca(adata)
         if(compute_pca == "python"){
             #use PCA computed in Python
-            sc$pp$pca(data_matrix)
-        } else {
+            pca <- sc$pp$pca(data_matrix)
+        }else if(compute_pca != "python"){
             #use PCA computed in R
-            adata$obsm$X_pca <- prcomp(data_matrix)$rotation
+            print("test")
+            pca <- reticulate::r_to_py(prcomp(data_matrix)$x)
         }
-        pca <- sc$pp$pca(data_matrix)
-        adata$obsm$X_pca <- pca
+        reticulate::py_set_attr(adata$obsm, "X_pca", pca)
     } else {
         #use full matrix
-        reticulate::py_set_item(adata$obsm, name = "X_pca", value = reticulate::np_array(data_matrix))
+        reticulate::py_set_attr(adata$obsm, name = "X_pca", value = reticulate::np_array(data_matrix))
     }
     
     
