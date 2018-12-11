@@ -27,7 +27,7 @@ bbknn <- function(data_matrix, batch, pca = TRUE, compute_pca = "python"){
     if(is.character(batch))  batch <- as.factor(batch)
     if(is.factor(batch))     batch <- as.numeric(batch)
     if(is.numeric(batch))    batch <- as.integer(batch)
-    adata <- anndata$AnnData(X=data_matrix, obs=batch)
+    adata <- anndata$AnnData(X=t(data_matrix), obs=batch)
     
     #perform PCA
     if(pca){
@@ -41,10 +41,10 @@ bbknn <- function(data_matrix, batch, pca = TRUE, compute_pca = "python"){
             print("test")
             pca <- reticulate::r_to_py(prcomp(data_matrix)$x)
         }
-        reticulate::py_set_attr(adata$obsm, "X_pca", pca)
+        reticulate::py_set_item(adata$obsm, "X_pca", pca)
     } else {
         #use full matrix
-        reticulate::py_set_attr(adata$obsm, name = "X_pca", value = reticulate::np_array(data_matrix))
+        reticulate::py_set_item(adata$obsm, name = "X_pca", value = reticulate::np_array(data_matrix))
     }
     
     

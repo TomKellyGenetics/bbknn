@@ -1,6 +1,4 @@
-## Batch balanced KNN
-
-# R implementation of the BBKNN algorithm
+# BBKNN algorithm
 
 ## bbknn version 0.1.0
 
@@ -37,7 +35,7 @@ devtools::install_github("TomKellyGenetics/bbknn")
 This package provides a function to perform clustering with the BBKNN algorithm:
 
 ```R
-data_matrix <- matrix(rnorm(1000), 50, 20)
+data_matrix <- matrix(rnorm(1000), 20, 50)
 batches <- c(rep(1, 20), rep(2, 20), rep(3, 10))
 corrected_matrix <- bbknn(data_matrix, batches)
 ```
