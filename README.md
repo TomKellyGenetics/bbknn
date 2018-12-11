@@ -1,4 +1,6 @@
-# BBKNN algorithm
+## Batch balanced KNN
+
+# R implementation of the BBKNN algorithm
 
 ## bbknn version 0.1.0
 
