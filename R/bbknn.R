@@ -53,17 +53,15 @@ bbknn <- function(data_matrix, batch, pca = TRUE, compute_pca = "python", nPcs =
         }
         adata <- anndata$AnnData(X=pca, obs=batch)
         reticulate::py_set_item(adata$obsm, "X_pca", pca)
+        sc$tl$pca(adata)
+        adata$obsm$X_pca <- pca
     } else {
         #use full matrix
         adata <- anndata$AnnData(X=t(data_matrix), obs=batch)
-        reticulate::py_set_item(adata$obsm, name = "X_pca", value = reticulate::np_array(t(data_matrix)))
+        sc$tl$pca(adata)
     }
-        
-        
-    
-    
     #perform BBKNN to derive corrected components
-    bbknn$bbknn(adata, batch_key=0)
-    corrected_matrix <- t(as.matrix(adata$data))
+    bbknn$bbknn(adata, batch_key = 0)
+    corrected_matrix <- t(py_to_r(adata$data))
     return(corrected_matrix)
 }
