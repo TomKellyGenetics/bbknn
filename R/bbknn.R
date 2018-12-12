@@ -52,7 +52,6 @@ bbknn <- function(data_matrix, batch, pca = TRUE, compute_pca = "python", nPcs =
             pca <- reticulate::r_to_py(t(prcomp(data_matrix)$x[1:nPcs,]))
         }
         adata <- anndata$AnnData(X=pca, obs=batch)
-        reticulate::py_set_item(adata$obsm, "X_pca", pca)
         sc$tl$pca(adata)
         adata$obsm$X_pca <- pca
     } else {
