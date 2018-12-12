@@ -5,7 +5,8 @@
 \alias{bbknn}
 \title{Run bbknn clustering algorithm}
 \usage{
-bbknn(data_matrix, batch, pca = TRUE, compute_pca = "python")
+bbknn(data_matrix, batch, pca = TRUE, compute_pca = "python",
+  nPcs = NULL)
 }
 \arguments{
 \item{data_matrix}{A matrix (genes x samples or cells) for expression data}
@@ -15,6 +16,8 @@ bbknn(data_matrix, batch, pca = TRUE, compute_pca = "python")
 \item{pca}{whether to compute pca (defaults to TRUE) or apply correction to the raw matrix (FALSE)}
 
 \item{compute_pca}{whether to compute PCA in Python (defaults to TRUE, requires scanpy library) or with R functions (FALSE)}
+
+\item{nPcs}{number of principal components to compute (defaults to 50 if more than 50 genes)}
 }
 \description{
 Implements the bbknn clustering algorithm in R using reticulate to run the Python version. Requires the python "bbknn" and "igraph" modules to be installed. Returns a vector of partition indices.

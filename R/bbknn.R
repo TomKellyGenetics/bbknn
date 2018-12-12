@@ -9,6 +9,7 @@
 ##' @param batch An integer vector of batches to correct for (converts factors or numeric vectors)
 ##' @param pca whether to compute pca (defaults to TRUE) or apply correction to the raw matrix (FALSE) 
 ##' @param compute_pca whether to compute PCA in Python (defaults to TRUE, requires scanpy library) or with R functions (FALSE)
+##' @param nPcs number of principal components to compute (defaults to 50 if more than 50 genes)
 ##'
 ##' @keywords graph network igraph mvtnorm simulation
 ##' @import reticulate
@@ -16,8 +17,18 @@
 ##' @export
 
 
-bbknn <- function(data_matrix, batch, pca = TRUE, compute_pca = "python"){
+bbknn <- function(data_matrix, batch, pca = TRUE, compute_pca = "python", nPcs = NULL){
     #import python modules with reticulate
+    if(!is.matrix(data_matrix)){
+        warning("matrix expected for data_matrix")
+        data_matrix <- as.matrix(data_matrix)
+    } 
+    if(is.null(nPcs)) nPcs <- min(50, ncol(data_matrix))
+    if(nPcs < nrow(data_matrix)){
+        warning("number of genes less than nPcs")
+        print(paste("using", nrow(data_matrix), "components"))
+        nPcs <- nrow(data_matrix)
+    }
     #reticulate::use_python("/usr/local/bin/python3")
     anndata <- reticulate::import("anndata",convert=FALSE)
     bbknn <- reticulate::import("bbknn", convert=FALSE)
@@ -27,29 +38,32 @@ bbknn <- function(data_matrix, batch, pca = TRUE, compute_pca = "python"){
     if(is.character(batch))  batch <- as.factor(batch)
     if(is.factor(batch))     batch <- as.numeric(batch)
     if(is.numeric(batch))    batch <- as.integer(batch)
-    adata <- anndata$AnnData(X=t(data_matrix), obs=batch)
     
     #perform PCA
     if(pca){
         reticulate::py_list_attributes(adata$obsm)
-        #sc$tl$pca(adata)
+        sc$tl$pca(adata)
         if(compute_pca == "python"){
             #use PCA computed in Python
-            pca <- sc$pp$pca(data_matrix)
+            pca <- sc$pp$pca(t(data_matrix))
         }else if(compute_pca != "python"){
             #use PCA computed in R
             print("test")
-            pca <- reticulate::r_to_py(prcomp(data_matrix)$x)
+            pca <- reticulate::r_to_py(t(prcomp(data_matrix)$x[1:nPcs,]))
         }
+        adata <- anndata$AnnData(X=pca, obs=batch)
         reticulate::py_set_item(adata$obsm, "X_pca", pca)
     } else {
         #use full matrix
-        reticulate::py_set_item(adata$obsm, name = "X_pca", value = reticulate::np_array(data_matrix))
+        adata <- anndata$AnnData(X=t(data_matrix), obs=batch)
+        reticulate::py_set_item(adata$obsm, name = "X_pca", value = reticulate::np_array(t(data_matrix)))
     }
+        
+        
     
     
     #perform BBKNN to derive corrected components
     bbknn$bbknn(adata, batch_key=0)
-    corrected_matrix <- as.matrix(adata$data)
+    corrected_matrix <- t(as.matrix(adata$data))
     return(corrected_matrix)
 }
