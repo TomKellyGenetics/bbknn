@@ -69,7 +69,7 @@ bbknn <- function(data_matrix, batch, pca = TRUE, compute_pca = "python", nPcs =
     tsne <- reticulate::py_to_r(adata$obsm$X_tsne)
     sc$tl$umap(adata)
     umap <- reticulate::py_to_r(adata$obsm$X_umap)
-    output <- list(corrected_matrix, pca, tsne, umap)
+    output <- list(corrected_matrix = corrected_matrix, pca = pca, tsne = tsne, umap = umap)
     return(output)
 }
 
