@@ -19,6 +19,9 @@ bbknn(data_matrix, batch, pca = TRUE, compute_pca = "python",
 
 \item{nPcs}{number of principal components to compute (defaults to 50 if more than 50 genes)}
 }
+\value{
+returns a list with the following components \item{corrected matrix}{matrix of data corrected by the BBKNN (batch based K nearest neighbours)}\item{pca}{principal components(matrix with row for every sample and column for each component)}\item{tsne}{t-distributed stochastic neighbour embedding (matrix with row for every sample)}\item{umap}{uniform manifold approximation and projection (matrix with row for every sample)}
+}
 \description{
 Implements the bbknn clustering algorithm in R using reticulate to run the Python version. Requires the python "bbknn" and "igraph" modules to be installed. Returns a vector of partition indices.
 }

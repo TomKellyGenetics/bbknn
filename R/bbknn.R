@@ -11,6 +11,8 @@
 ##' @param compute_pca whether to compute PCA in Python (defaults to TRUE, requires scanpy library) or with R functions (FALSE)
 ##' @param nPcs number of principal components to compute (defaults to 50 if more than 50 genes)
 ##'
+##' @return returns a list with the following components \item{corrected matrix}{matrix of data corrected by the BBKNN (batch based K nearest neighbours)}\item{pca}{principal components(matrix with row for every sample and column for each component)}\item{tsne}{t-distributed stochastic neighbour embedding (matrix with row for every sample)}\item{umap}{uniform manifold approximation and projection (matrix with row for every sample)}
+##'
 ##' @keywords graph network igraph mvtnorm simulation
 ##' @import reticulate
 ##' @importFrom stats prcomp
@@ -23,8 +25,8 @@ bbknn <- function(data_matrix, batch, pca = TRUE, compute_pca = "python", nPcs =
         warning("matrix expected for data_matrix")
         data_matrix <- as.matrix(data_matrix)
     } 
-    if(is.null(nPcs)) nPcs <- min(50, ncol(data_matrix))
-    if(nPcs < nrow(data_matrix)){
+    if(is.null(nPcs)) nPcs <- min(50, nrow(data_matrix), ncol(data_matrix))
+    if(nPcs > nrow(data_matrix)){
         warning("number of genes less than nPcs")
         print(paste("using", nrow(data_matrix), "components"))
         nPcs <- nrow(data_matrix)
@@ -41,8 +43,7 @@ bbknn <- function(data_matrix, batch, pca = TRUE, compute_pca = "python", nPcs =
     
     #perform PCA
     if(pca){
-        reticulate::py_list_attributes(adata$obsm)
-        sc$tl$pca(adata)
+        #sc$tl$pca(adata)
         if(compute_pca == "python"){
             #use PCA computed in Python
             pca <- sc$pp$pca(t(data_matrix))
@@ -61,6 +62,17 @@ bbknn <- function(data_matrix, batch, pca = TRUE, compute_pca = "python", nPcs =
     }
     #perform BBKNN to derive corrected components
     bbknn$bbknn(adata, batch_key = 0)
-    corrected_matrix <- t(py_to_r(adata$data))
-    return(corrected_matrix)
+    corrected_matrix <- t(reticulate::py_to_r(adata$X))
+    sc$tl$pca(adata)
+    pca <- reticulate::py_to_r(adata$obsm$X_pca)
+    sc$tl$tsne(adata)
+    tsne <- reticulate::py_to_r(adata$obsm$X_tsne)
+    sc$tl$umap(adata)
+    umap <- reticulate::py_to_r(adata$obsm$X_umap)
+    output <- list(corrected_matrix, pca, tsne, umap)
+    return(output)
 }
+
+
+
+

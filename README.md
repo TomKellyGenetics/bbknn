@@ -1,6 +1,6 @@
 # BBKNN algorithm
 
-## bbknn version 0.1.0
+## bbknn version 0.2.0
 
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/bbknn)](https://cran.r-project.org/package=bbknn)
 [![Travis Build Status](https://travis-ci.org/TomKellyGenetics/bbknn.svg?branch=master)](https://travis-ci.org/TomKellyGenetics/bbknn)
@@ -10,7 +10,7 @@
 
 ## Batch effect correction with the BBKNN algorithm in R
 
-This package allows calling the BBKNN algorthm for batch effect correction from R. See the Python implementation for more details: 
+This package allows calling the BBKNN (batch balanced k nearest neighbours) algorthm for batch effect correction from R. See the Python implementation for more details: 
 
 https://github.com/Teichlab/bbknn
 
@@ -37,7 +37,11 @@ This package provides a function to perform clustering with the BBKNN algorithm:
 ```R
 data_matrix <- matrix(rnorm(1000), 20, 50)
 batches <- c(rep(1, 20), rep(2, 20), rep(3, 10))
-corrected_matrix <- bbknn(data_matrix, batches)
+outs <- bbknn(data_matrix, batches)
+
+corrected_matrix <- outs$corrected
+tsne <- outs$tsne
+umap <- outs$umap
 ```
 
 This matrix can then be used for plotting with tSNE or UMAP and further analysis of clusters.
